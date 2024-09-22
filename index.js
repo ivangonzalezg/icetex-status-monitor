@@ -1,10 +1,12 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer");
 const TelegramBot = require("node-telegram-bot-api");
+const validator = require("validator");
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const ICETEX_URL = process.env.ICETEX_URL;
+const ICETEX_URL =
+  "https://www.icetex.gov.co/portalacces/tradicional/estado/cptCambiarEstado.asp?origen=portal";
 const APPLICANT_ID_NUMBER = process.env.APPLICANT_ID_NUMBER;
 const APPLICATION_ID = process.env.APPLICATION_ID;
 
@@ -18,6 +20,27 @@ const delay = (time) => {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
   });
+};
+
+const validateEnvVariables = () => {
+  if (!TELEGRAM_TOKEN) {
+    throw new Error("`TELEGRAM_TOKEN` is missing");
+  }
+  if (!TELEGRAM_CHAT_ID) {
+    throw new Error("`TELEGRAM_CHAT_ID` is missing");
+  } else if (!validator.isNumeric(TELEGRAM_CHAT_ID)) {
+    throw new Error("`TELEGRAM_CHAT_ID` must be numeric");
+  }
+  if (!APPLICANT_ID_NUMBER) {
+    throw new Error("`APPLICANT_ID_NUMBER` is missing");
+  } else if (!validator.isNumeric(APPLICANT_ID_NUMBER)) {
+    throw new Error("`APPLICANT_ID_NUMBER` must be numeric");
+  }
+  if (!APPLICATION_ID) {
+    throw new Error("`APPLICATION_ID` is missing");
+  } else if (!validator.isNumeric(APPLICATION_ID)) {
+    throw new Error("`APPLICATION_ID` must be numeric");
+  }
 };
 
 const checkApplicationStatus = async () => {
@@ -76,6 +99,7 @@ let lastStatusMessage = null;
 
 const main = async () => {
   try {
+    validateEnvVariables();
     const newStatusMessage = await checkApplicationStatus();
 
     if (newStatusMessage !== lastStatusMessage) {
@@ -83,7 +107,12 @@ const main = async () => {
       await sendNotification(newStatusMessage);
     }
   } catch (error) {
-    console.error("Error during scraping:", error);
+    console.error("Error:", error.message);
+    try {
+      await sendNotification(`Error occurred: ${error.message}`);
+    } catch (err) {
+      console.error("Failed to send error notification:", err.message);
+    }
   }
 };
 
