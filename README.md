@@ -4,6 +4,11 @@ Este proyecto es un **scraper automatizado** que revisa el estado de las solicit
 
 El bot se ejecuta dentro de un contenedor Docker y es compatible tanto con sistemas **AMD** como **ARM** (Raspberry Pi). Utiliza **Puppeteer** para el scraping y **Telegram Bot API** para las notificaciones.
 
+## Imágenes
+
+![Dashboard](.github/screenshots/mobile.jpeg)
+**Chat**
+
 ## Características
 
 - Revisión automatizada del estado de solicitudes en ICETEX.
