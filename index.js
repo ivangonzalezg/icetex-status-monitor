@@ -2,6 +2,7 @@ require("dotenv").config();
 const puppeteer = require("puppeteer");
 const TelegramBot = require("node-telegram-bot-api");
 const validator = require("validator");
+const moment = require("moment");
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -173,4 +174,4 @@ const main = async () => {
 
 main();
 
-setInterval(main, 60000);
+setInterval(main, moment.duration(6, "hours"));
