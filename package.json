@@ -1,0 +1,40 @@
+{
+  "name": "icetex-status-monitor",
+  "version": "1.0.0",
+  "description": "A tool to monitor changes in the status of ICETEX applications and send notifications to Telegram.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": {
+    "name": "Ivan Gonzalez",
+    "email": "contacto@ivangonzalez.co",
+    "url": "https://github.com/ivangonzalezg"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "16.4.5",
+    "node-telegram-bot-api": "0.66.0",
+    "puppeteer": "23.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.7"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivangonzalezg/icetex-status-monitor.git"
+  },
+  "keywords": [
+    "web scraping",
+    "telegram",
+    "puppeteer",
+    "docker",
+    "icetex",
+    "status",
+    "monitoring"
+  ]
+}
