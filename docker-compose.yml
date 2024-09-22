@@ -1,0 +1,6 @@
+services:
+  icetex-status-monitor:
+    build: .
+    container_name: icetex-status-monitor
+    env_file:
+      - .env

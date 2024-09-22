@@ -44,7 +44,19 @@ const validateEnvVariables = () => {
 };
 
 const checkApplicationStatus = async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    executablePath: process.env.CHROME_BIN,
+    headless: true,
+    defaultViewport: null,
+    args: [
+      "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36",
+      "--disable-blink-features=AutomationControlled",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--headless",
+      "--disable-gpu",
+    ],
+  });
   const page = await browser.newPage();
   await page.goto(ICETEX_URL);
 
