@@ -137,12 +137,12 @@ const checkApplicationStatus = async () => {
   await browser.close();
 
   const message = `
-📋 *Application Information:*
+📋 *Información de la solicitud:*
 - Nombre: ${firstName} ${lastName}
 - IES: ${institution}
 - Programa: ${program}
 
-📅 *Latest Status:*
+📅 *Último estado:*
 - Fecha: ${latestStatus.date}
 - Estado: ${latestStatus.status}
   `;
@@ -172,4 +172,5 @@ const main = async () => {
 };
 
 main();
+
 setInterval(main, 60000);
