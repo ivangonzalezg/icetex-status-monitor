@@ -48,36 +48,79 @@ const checkApplicationStatus = async () => {
   const page = await browser.newPage();
   await page.goto(ICETEX_URL);
 
-  await page.select('select[name="tipoid"]', "2");
-  await page.type('input[name="IdSolicitante"]', APPLICANT_ID_NUMBER);
-  await page.click('input[name="Submit"]');
+  try {
+    await page.select('select[name="tipoid"]', "2");
+  } catch (error) {
+    throw new Error("Select element for `tipoid` not found");
+  }
+
+  try {
+    await page.type('input[name="IdSolicitante"]', APPLICANT_ID_NUMBER);
+  } catch (error) {
+    throw new Error("Input element for `IdSolicitante` not found");
+  }
+
+  try {
+    await page.click('input[name="Submit"]');
+  } catch (error) {
+    throw new Error("Submit button not found");
+  }
 
   await delay(1000);
 
-  const applicationSelector = `a[href*="idsolicitud=${APPLICATION_ID}"]`;
-  await page.click(applicationSelector);
+  try {
+    const applicationSelector = `a[href*="idsolicitud=${APPLICATION_ID}"]`;
+    await page.click(applicationSelector);
+  } catch (error) {
+    throw new Error("Application link not found");
+  }
 
   await delay(1000);
 
-  const firstName = await page.$eval('input[name="nombres"]', (el) => el.value);
-  const lastName = await page.$eval(
-    'input[name="apellidos"]',
-    (el) => el.value
-  );
-  const institution = await page.$eval(
-    'input[name="institucion"]',
-    (el) => el.value
-  );
-  const program = await page.$eval('input[name="programa"]', (el) => el.value);
+  let firstName, lastName, institution, program;
 
-  const latestStatus = await page.$$eval("table tbody tr", (rows) => {
-    const lastRow = rows[rows.length - 2];
-    const columns = lastRow.querySelectorAll("td");
-    return {
-      date: columns[0].innerText.trim(),
-      status: columns[2].innerText.trim(),
-    };
-  });
+  try {
+    firstName = await page.$eval('input[name="nombres"]', (el) => el.value);
+  } catch (error) {
+    throw new Error("First name field not found");
+  }
+
+  try {
+    lastName = await page.$eval('input[name="apellidos"]', (el) => el.value);
+  } catch (error) {
+    throw new Error("Last name field not found");
+  }
+
+  try {
+    institution = await page.$eval(
+      'input[name="institucion"]',
+      (el) => el.value
+    );
+  } catch (error) {
+    throw new Error("Institution field not found");
+  }
+
+  try {
+    program = await page.$eval('input[name="programa"]', (el) => el.value);
+  } catch (error) {
+    throw new Error("Program field not found");
+  }
+
+  let latestStatus;
+
+  try {
+    latestStatus = await page.$$eval("table tbody tr", (rows) => {
+      if (rows.length < 2) throw new Error("No status rows found");
+      const lastRow = rows[rows.length - 2];
+      const columns = lastRow.querySelectorAll("td");
+      return {
+        date: columns[0].innerText.trim(),
+        status: columns[2].innerText.trim(),
+      };
+    });
+  } catch (error) {
+    throw new Error("Error extracting the latest status from the table");
+  }
 
   await browser.close();
 
@@ -117,5 +160,4 @@ const main = async () => {
 };
 
 main();
-
 setInterval(main, 60000);
