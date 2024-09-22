@@ -138,13 +138,13 @@ const checkApplicationStatus = async () => {
 
   const message = `
 📋 *Application Information:*
-- Name: ${firstName} ${lastName}
-- Institution: ${institution}
-- Program: ${program}
+- Nombre: ${firstName} ${lastName}
+- IES: ${institution}
+- Programa: ${program}
 
 📅 *Latest Status:*
-- Date: ${latestStatus.date}
-- Status: ${latestStatus.status}
+- Fecha: ${latestStatus.date}
+- Estado: ${latestStatus.status}
   `;
 
   return message;
