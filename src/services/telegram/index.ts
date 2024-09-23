@@ -18,6 +18,36 @@ telegrafBot.start(onStart);
 
 telegrafBot.command("iniciar", onStart);
 
+telegrafBot.command("info", async (ctx) => {
+  const chatId = ctx.chat.id;
+  const user = await getUser(chatId);
+  if (user && user.application) {
+    await ctx.reply(`Está suscrito a la solicitud ${user.application}`);
+  } else {
+    await ctx.reply(
+      "Aún no está suscrito a ninguna solicitud. Para suscribirse precione en /iniciar"
+    );
+  }
+});
+
+telegrafBot.command("estado", async (ctx) => {
+  const chatId = ctx.chat.id;
+  const user = await getUser(chatId);
+  if (user && user.application) {
+    const message = await ctx.reply("Cargando último estado...");
+    const statusMessage = await getApplicationStatus(
+      Number(user.identification),
+      user.application
+    );
+    await ctx.reply(statusMessage, { parse_mode: "Markdown" });
+    await ctx.deleteMessage(message.message_id);
+  } else {
+    await ctx.reply(
+      "Aún no está suscrito a ninguna solicitud. Para suscribirse precione en /iniciar"
+    );
+  }
+});
+
 telegrafBot.command("salir", async (ctx) => {
   const chatId = ctx.chat.id;
   const user = await getUser(chatId);
