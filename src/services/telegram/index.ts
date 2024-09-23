@@ -1,17 +1,34 @@
-import { Telegraf } from "telegraf";
+import { Context, Telegraf } from "telegraf";
 import { message } from "telegraf/filters";
 import validator from "validator";
 import moment from "moment";
 import { TELEGRAM_TOKEN } from "../../constants";
-import { getUser, saveUser, Step } from "../../database";
+import { deleteUser, getUser, saveUser, Step } from "../../database";
 import { getApplications, getApplicationStatus } from "../icetex";
 
 const telegrafBot = new Telegraf(TELEGRAM_TOKEN);
 
-telegrafBot.start(async (ctx) => {
-  const chatId = ctx.chat.id;
-  ctx.reply("Ingresa tu número de cédula:");
+async function onStart(ctx: Context) {
+  const chatId = Number(ctx.chat?.id);
+  ctx.reply("Ingresa tu número de cédula:", { reply_markup: undefined });
   saveUser(chatId, { step: Step.identification }, false);
+}
+
+telegrafBot.start(onStart);
+
+telegrafBot.command("iniciar", onStart);
+
+telegrafBot.command("salir", async (ctx) => {
+  const chatId = ctx.chat.id;
+  const user = await getUser(chatId);
+  if (user && user.application) {
+    await deleteUser(chatId);
+    await ctx.reply("Se ha cancelado su suscripción");
+  } else {
+    await ctx.reply(
+      "Aún no está suscrito a ninguna solicitud. Para suscribirse precione en /iniciar"
+    );
+  }
 });
 
 telegrafBot.on(message("text"), async (ctx) => {

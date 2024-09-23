@@ -49,3 +49,8 @@ export const saveUser = async (
   const reference = db.collection("users").doc(String(chatId));
   await reference.set(data, { merge });
 };
+
+export const deleteUser = async (chatId: number) => {
+  const reference = db.collection("users").doc(String(chatId));
+  await reference.delete();
+};
