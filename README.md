@@ -1,6 +1,6 @@
 # ICETEX Status Monitor Bot
 
-Este proyecto es un **scraper automatizado** que revisa el estado de las solicitudes en el sitio web de **ICETEX** y envía notificaciones a **Telegram** cuando hay cambios en el estado de una solicitud específica.
+Este proyecto está diseñado para monitorear el estado de las solicitudes de ICETEX y envía notificaciones a **Telegram** cuando hay cambios en el estado de una solicitud específica.
 
 El bot se ejecuta dentro de un contenedor Docker y es compatible tanto con sistemas **AMD** como **ARM** (Raspberry Pi). Utiliza **Puppeteer** para el scraping y **Telegram Bot API** para las notificaciones.
 
@@ -11,27 +11,26 @@ El bot se ejecuta dentro de un contenedor Docker y es compatible tanto con siste
 
 ## Características
 
-- Revisión automatizada del estado de solicitudes en ICETEX.
-- Notificaciones a través de Telegram cuando cambia el estado de una solicitud.
-- Implementación mediante **Puppeteer** y **Telegram Bot API**.
-- Ejecutable en sistemas **ARM** (Raspberry Pi) y **AMD** utilizando Docker.
+- **Monitoreo de Servicios**: Monitorea continuamente el estado del servicio de ICETEX.
+- **Notificaciones por Telegram**: Envía actualizaciones en tiempo real sobre el estado del servicio a través de Telegram.
+- **Dockerizado**: Despliega el servicio fácilmente utilizando Docker y Docker Compose.
+- **TypeScript**: El proyecto está escrito en TypeScript, lo que garantiza seguridad de tipos y características modernas de JavaScript.
 
 ## Prerrequisitos
 
-Antes de ejecutar el proyecto, asegúrate de tener instalados:
+Antes de comenzar, asegúrate de tener instalado lo siguiente:
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Node.js](https://nodejs.org/) (v14+)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- Token de Bot de Telegram
 
 ### Variables de Entorno
 
-Debes definir las siguientes variables de entorno. Puedes crear un archivo `.env` basado en el archivo de ejemplo `.env.example`:
+Debes definir las siguientes variables de entorno. Debes crear un archivo `.env` basado en el archivo de ejemplo `.env.example`:
 
 ```
 TELEGRAM_TOKEN=your-telegram-bot-token
-TELEGRAM_CHAT_ID=your-telegram-chat-id
-APPLICANT_ID_NUMBER=your-applicant-id-number
-APPLICATION_ID=your-application-id
 ```
 
 ## Configuración del Proyecto
@@ -53,7 +52,11 @@ Crea un archivo `.env` en la raíz del proyecto basado en el archivo `.env.examp
 cp .env.example .env
 ```
 
-Rellena las variables en el archivo `.env` con tus propios valores (como tu token de Telegram, ID de chat, número de identificación, etc.).
+Rellena las variables en el archivo `.env` con tus propios valores (como tu token de Telegram, etc.).
+
+### Añadir credenciales de Firebase
+
+Asegúrate de tener el archivo service-account.json de Firebase, el cual contiene las credenciales necesarias para conectarse a Firestore. Colócalo en el directorio raíz del proyecto.
 
 ### Construcción y Ejecución con Docker
 
@@ -87,20 +90,45 @@ Si deseas detener el bot, puedes hacerlo con el siguiente comando:
 docker-compose down
 ```
 
+# Ejecutar con Docker Compose
+
+Si no quieres construir la imagen localmente, puedes utilizar la imagen ya construida:
+
+1. Crea un archivo `docker-compose.yml` con el siguiente contenido:
+
+   ```yaml
+   services:
+     icetex-status-monitor:
+       container_name: icetex-status-monitor
+       image: ivangonzalezg/icetex-status-monitor:latest
+       env_file:
+         - .env
+       volumes:
+         - ./service-account.json:/usr/src/app/service-account.json:ro
+   ```
+
+2. Ejecuta el siguiente comando para iniciar el contenedor:
+
+   ```bash
+   docker-compose up -d
+   ```
+
 ## Estructura del Proyecto
 
 ```
 icetex-status-monitor/
-│
-├── .dockerignore
-├── .env.example
-├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
-├── index.js
+├── .env.example
 ├── package.json
-├── yarn.lock
-└── README.md
+├── tsconfig.json
+├── src/
+│   ├── constants/
+│   ├── database/
+│   ├── services/
+│       ├── icetex/
+│       └── telegram/
+└── index.ts
 ```
 
 ## Problemas Comunes
@@ -112,6 +140,12 @@ Si encuentras un error relacionado con que Puppeteer no puede encontrar un naveg
 ## Contribuir
 
 Si deseas contribuir a este proyecto, siéntete libre de abrir issues o pull requests en el repositorio.
+
+1. Haz un fork del repositorio.
+2. Crea una nueva rama (`git checkout -b nombre-de-la-funcionalidad`).
+3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
+4. Haz push a la rama (`git push origin nombre-de-la-funcionalidad`).
+5. Crea un nuevo Pull Request.
 
 ## Licencia
 
