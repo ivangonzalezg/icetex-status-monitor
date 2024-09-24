@@ -8,6 +8,25 @@ import { getApplications, getApplicationStatus } from "../icetex";
 
 const telegrafBot = new Telegraf(TELEGRAM_TOKEN);
 
+telegrafBot.telegram.setMyCommands([
+  {
+    command: "iniciar",
+    description: "Iniciar",
+  },
+  {
+    command: "info",
+    description: "Info",
+  },
+  {
+    command: "estado",
+    description: "Estado",
+  },
+  {
+    command: "salir",
+    description: "Salir",
+  },
+]);
+
 async function onStart(ctx: Context) {
   const chatId = Number(ctx.chat?.id);
   ctx.reply("Ingresa tu número de cédula:", { reply_markup: undefined });
