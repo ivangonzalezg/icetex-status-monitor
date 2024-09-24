@@ -12,3 +12,7 @@ async function main() {
 }
 
 main();
+
+process.once("SIGINT", () => telegrafBot.stop("SIGINT"));
+
+process.once("SIGTERM", () => telegrafBot.stop("SIGTERM"));
