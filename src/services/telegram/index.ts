@@ -15,11 +15,11 @@ telegrafBot.telegram.setMyCommands([
   },
   {
     command: "info",
-    description: "Info",
+    description: "Información de tu subscripción",
   },
   {
     command: "estado",
-    description: "Estado",
+    description: "Obtener último estado",
   },
   {
     command: "salir",
