@@ -76,7 +76,11 @@ export async function getApplications(
 export async function getApplicationStatus(
   identification: number,
   application: number
-): Promise<string> {
+): Promise<{
+  statusMessage: string;
+  latestStatus: string;
+  latestFetch: string;
+}> {
   const page = await getPage();
   try {
     await page.select('select[name="tipoid"]', "2");
@@ -146,7 +150,11 @@ export async function getApplicationStatus(
 - Fecha: ${latestStatus.date}
 - Estado: ${latestStatus.status}
   `;
-    return message;
+    return {
+      statusMessage: message,
+      latestStatus: latestStatus.status,
+      latestFetch: latestStatus.date,
+    };
   } catch (error) {
     throw new Error("Error extrayendo el último estado de la tabla");
   }

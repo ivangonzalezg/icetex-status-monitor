@@ -24,6 +24,8 @@ export interface User {
   application?: number | null;
   step: Step | null;
   applications?: Application[];
+  latestStatus?: string;
+  latestFetch?: string;
 }
 
 export const getUser = async (chatId: number): Promise<User | null> => {
@@ -38,12 +40,7 @@ export const getUser = async (chatId: number): Promise<User | null> => {
 
 export const saveUser = async (
   chatId: number,
-  data: {
-    application?: number | null;
-    applications?: Application[] | null;
-    identification?: number | null;
-    step?: Step | null;
-  },
+  data: Partial<User>,
   merge: boolean = true
 ) => {
   const reference = db.collection("users").doc(String(chatId));

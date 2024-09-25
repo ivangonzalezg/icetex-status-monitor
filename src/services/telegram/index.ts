@@ -54,12 +54,14 @@ telegrafBot.command("estado", async (ctx) => {
   const user = await getUser(chatId);
   if (user && user.application) {
     const message = await ctx.reply("Cargando último estado...");
-    const statusMessage = await getApplicationStatus(
-      Number(user.identification),
-      user.application
-    );
+    const { statusMessage, latestFetch, latestStatus } =
+      await getApplicationStatus(Number(user.identification), user.application);
     await ctx.reply(statusMessage, { parse_mode: "Markdown" });
     await ctx.deleteMessage(message.message_id);
+    await saveUser(chatId, {
+      latestFetch,
+      latestStatus,
+    });
   } else {
     await ctx.reply(
       "Aún no está suscrito a ninguna solicitud. Para suscribirse precione en /iniciar"
@@ -134,12 +136,14 @@ telegrafBot.on(message("text"), async (ctx) => {
     await saveUser(chatId, { application, step: null });
     await ctx.reply(`Ahora está suscrito a la solicitud ${application}`);
     const message = await ctx.reply("Cargando último estado...");
-    const statusMessage = await getApplicationStatus(
-      Number(user?.identification),
-      application
-    );
+    const { statusMessage, latestFetch, latestStatus } =
+      await getApplicationStatus(Number(user?.identification), application);
     await ctx.reply(statusMessage, { parse_mode: "Markdown" });
     await ctx.deleteMessage(message.message_id);
+    await saveUser(chatId, {
+      latestFetch,
+      latestStatus,
+    });
   }
 });
 
