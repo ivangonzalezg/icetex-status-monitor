@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { ICETEX_URL } from "../../constants";
 import { Application } from "../../database";
+import moment from "moment";
 
 export const delay = (time = 2000) => {
   return new Promise(function (resolve) {
@@ -153,7 +154,7 @@ export async function getApplicationStatus(
     return {
       statusMessage: message,
       latestStatus: latestStatus.status,
-      latestFetch: latestStatus.date,
+      latestFetch: moment().toISOString(),
     };
   } catch (error) {
     throw new Error("Error extrayendo el último estado de la tabla");
