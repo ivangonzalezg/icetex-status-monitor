@@ -3,6 +3,8 @@ import { ICETEX_URL } from "../../constants";
 import { Application } from "../../database";
 import moment from "moment";
 
+let closeBrowserTimer: NodeJS.Timeout | null = null;
+
 export const delay = (time = 2000) => {
   return new Promise(function (resolve) {
     setTimeout(resolve, time);
@@ -10,6 +12,22 @@ export const delay = (time = 2000) => {
 };
 
 let browser: Browser | null = null;
+
+function startCloseBrowserTimer() {
+  closeBrowserTimer = setTimeout(async () => {
+    if (browser) {
+      await browser.close();
+      browser = null;
+    }
+  }, moment.duration(1, "minute").asMilliseconds());
+}
+
+function resetCloseBrowserTimer() {
+  if (closeBrowserTimer) {
+    clearTimeout(closeBrowserTimer);
+  }
+  startCloseBrowserTimer();
+}
 
 async function getBrowser() {
   if (!browser) {
@@ -26,7 +44,9 @@ async function getBrowser() {
         "--disable-gpu",
       ],
     });
+    startCloseBrowserTimer();
   }
+  resetCloseBrowserTimer();
   return browser;
 }
 
@@ -151,6 +171,7 @@ export async function getApplicationStatus(
 - Fecha: ${latestStatus.date}
 - Estado: ${latestStatus.status}
   `;
+    await page.close();
     return {
       statusMessage: message,
       latestStatus: latestStatus.status,
