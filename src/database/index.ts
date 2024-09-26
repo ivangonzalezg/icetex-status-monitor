@@ -1,5 +1,6 @@
 import admin, { ServiceAccount } from "firebase-admin";
 import serviceAccount from "../../service-account.json";
+import moment from "moment";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as ServiceAccount),
@@ -50,4 +51,27 @@ export const saveUser = async (
 export const deleteUser = async (chatId: number) => {
   const reference = db.collection("users").doc(String(chatId));
   await reference.delete();
+};
+
+interface UserWithId extends User {
+  id: string;
+}
+
+export const getUsers = async () => {
+  const snapshot = await db
+    .collection("users")
+    .where("latestFetch", "<", moment().subtract(1, "day").toISOString())
+    .where("identification", ">", 0)
+    .where("application", ">", 0)
+    .limit(10)
+    .get();
+  const users: UserWithId[] = [];
+  snapshot.forEach((doc) => {
+    const user = doc.data() as User;
+    users.push({
+      id: doc.id,
+      ...user,
+    });
+  });
+  return users;
 };
