@@ -1,16 +1,17 @@
 require("dotenv").config();
+import moment from "moment";
+import { consola } from "consola";
 import { TELEGRAM_TOKEN } from "./src/constants";
 import { telegrafBot } from "./src/services/telegram";
 import { getUsers, saveUser } from "./src/database";
 import { getApplicationStatus } from "./src/services/icetex";
-import moment from "moment";
 
 if (!TELEGRAM_TOKEN) {
   throw new Error("`TELEGRAM_TOKEN` es necesario");
 }
 
 async function syncUsers() {
-  console.log("Syncing users...", moment().toISOString());
+  consola.start("Syncing users...");
   const users = await getUsers();
   await Promise.all(
     users.map(async (user) => {
@@ -28,12 +29,12 @@ async function syncUsers() {
       });
     })
   );
-  console.log(`${users.length} users synced`, moment().toISOString());
+  consola.success(`${users.length} users synced`);
 }
 
 async function main() {
   await new Promise<void>((resolve) => telegrafBot.launch(() => resolve()));
-  console.log("Bot running...");
+  consola.success("Bot running...");
   syncUsers();
 }
 
