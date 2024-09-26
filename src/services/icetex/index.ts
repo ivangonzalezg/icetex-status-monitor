@@ -89,7 +89,7 @@ export async function getApplications(
       };
     });
   });
-  applications.filter((application) => !!application.id);
+  applications = applications.filter((application) => !!application.id);
   await page.close();
   return applications;
 }
