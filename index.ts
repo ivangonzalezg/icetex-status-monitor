@@ -40,7 +40,7 @@ async function main() {
 
 main();
 
-setInterval(syncUsers, moment.duration(1, "hour").asMilliseconds());
+setInterval(syncUsers, moment.duration(50, "minutes").asMilliseconds());
 
 process.once("SIGINT", () => telegrafBot.stop("SIGINT"));
 
