@@ -20,13 +20,15 @@ async function syncUsers() {
           Number(user.identification),
           Number(user.application)
         );
-      await telegrafBot.telegram.sendMessage(user.id, statusMessage, {
-        parse_mode: "Markdown",
-      });
-      await saveUser(Number(user.id), {
-        latestFetch,
-        latestStatus,
-      });
+      if (user.latestStatus !== latestStatus) {
+        await telegrafBot.telegram.sendMessage(user.id, statusMessage, {
+          parse_mode: "Markdown",
+        });
+        await saveUser(Number(user.id), {
+          latestFetch,
+          latestStatus,
+        });
+      }
     })
   );
   consola.success(`${users.length} users synced`);
